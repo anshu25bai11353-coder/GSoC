@@ -8,10 +8,22 @@ import streamlit as st
 
 # ---------- FIX: Cloud पर Models खुद Train होंगे (Storage बचाने के लिए) ----------
 if not os.path.exists('models/crop_yield_model.pkl'):
-    st.warning("⚙️ Models not found! Training AI models on Cloud... (Takes ~20 seconds)")
-    subprocess.run(['python', 'train_model.py'], check=True)
-    st.success("✅ Models trained! Refreshing...")
-    st.rerun()
+    import sys
+    with st.spinner("⚙️ Training AI models on Cloud... (Takes ~30 seconds)"):
+        try:
+            # Use sys.executable to guarantee the correct Python version
+            result = subprocess.run(
+                [sys.executable, 'train_model.py'], 
+                capture_output=True, 
+                text=True, 
+                check=True
+            )
+            st.success("✅ Models trained successfully!")
+            st.rerun()
+        except subprocess.CalledProcessError as e:
+            # Show the actual error so we know what's wrong (bypasses redaction)
+            st.error(f"❌ Training failed! Here is the exact error:\n\n```\nSTDOUT:\n{e.stdout}\n\nSTDERR:\n{e.stderr}\n```")
+            st.stop()
 # ---------- बाकी का आपका Original Code यहाँ से शुरू करें ----------
 
 import streamlit as st
