@@ -1,6 +1,19 @@
 """
 FarmIQ - Smart Agri Advisor Streamlit Dashboard
 """
+
+import os
+import subprocess
+import streamlit as st
+
+# ---------- FIX: Cloud पर Models खुद Train होंगे (Storage बचाने के लिए) ----------
+if not os.path.exists('models/crop_yield_model.pkl'):
+    st.warning("⚙️ Models not found! Training AI models on Cloud... (Takes ~20 seconds)")
+    subprocess.run(['python', 'train_model.py'], check=True)
+    st.success("✅ Models trained! Refreshing...")
+    st.rerun()
+# ---------- बाकी का आपका Original Code यहाँ से शुरू करें ----------
+
 import streamlit as st
 import pandas as pd
 import numpy as np
